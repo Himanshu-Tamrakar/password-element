@@ -1,11 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injector } from '@angular/core';
+import { NgModule, DoBootstrap, Injector, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PasswordStrengthModule } from './password-strength/password-strength.module';
 import { PasswordStrengthComponent } from './password-strength/component/password-strength/password-strength.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -14,15 +15,23 @@ import { PasswordStrengthComponent } from './password-strength/component/passwor
   imports: [
     BrowserModule,
     AppRoutingModule,
-    PasswordStrengthModule
+    PasswordStrengthModule,
+    BrowserAnimationsModule
   ],
   entryComponents: [PasswordStrengthComponent],
   providers: [],
-  bootstrap: []
+  bootstrap: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppModule { 
-  constructor(private injector: Injector) {
+export class AppModule implements DoBootstrap { 
+
+  ngDoBootstrap(): void {
       const el = createCustomElement(PasswordStrengthComponent, {injector: this.injector});
       customElements.define("app-password-strength", el);
+  }
+
+  constructor(private injector: Injector) {
+      // const el = createCustomElement(PasswordStrengthComponent, {injector: this.injector});
+      // customElements.define("app-password-strength", el);
   }
 }

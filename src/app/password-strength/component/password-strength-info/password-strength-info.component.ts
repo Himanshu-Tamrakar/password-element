@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { _Requirements } from '../../interface/password-rule';
+import { _PRule, _Requirements } from '../../interface/password-rule';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-password-strength-info',
@@ -7,15 +8,35 @@ import { _Requirements } from '../../interface/password-rule';
   styleUrls: ['./password-strength-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PasswordStrengthInfoComponent implements OnInit {
-  @Input('requirments') requirments:_Requirements;
+export class PasswordStrengthInfoComponent {
+  @Input('requirments') requirments: _Requirements;
+  @Input('passwordRule') passwordRule: _PRule;
 
   constructor(private cd: ChangeDetectorRef) { }
 
-  ngOnInit() {}
+  showInfo = false;
 
-  runChangeDetection() {
-   this.cd.detectChanges();
- }
+  // ngOnInit() {
+  //   // this.passwordRule = this.getPasswordRule();
+  // }
+
+  runChangeDetection(): void {
+    this.showInfo = this.infoVisible(this.requirments);
+    this.cd.detectChanges();
+  }
+
+  private infoVisible(requirments:_Requirements): boolean {
+    if (!requirments['at_least_x_chars'] || !requirments['at_max_x_chars']) return true;
+
+    const keys: String[] = _.keys(this.passwordRule);
+
+    for (let i = 0; i < keys.length; i++) {
+      const k: string = String(keys[i]);
+      if (this.passwordRule[k] && !requirments[k]) {
+        return true;
+      }
+    }
+    return false;
+  }
 
 }

@@ -2,11 +2,16 @@ import { Directive, ElementRef, Input, Output, OnInit, EventEmitter, HostListene
 import { _PRule, _Requirements } from '../interface/password-rule';
 import { RegExpValidator } from '../validator/regexp.class';
 import { PasswordStrengthValidator } from '../validator/password-strength-validator';
+import { Subscription, Subject } from 'rxjs';
+import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 
 @Directive({
   selector: `[password-validate]`
 })
 export class PasswordValidateDirective extends PasswordStrengthValidator implements OnInit {
+  public keyUp = new Subject<KeyboardEvent>();
+  private subscription: Subscription;
 
   @Input('passwordRule') passwordRule: _PRule;
   @Output() passwordValidityChange = new EventEmitter<_Requirements>();
@@ -24,7 +29,20 @@ export class PasswordValidateDirective extends PasswordStrengthValidator impleme
   constructor(private el: ElementRef) { super() }
 
   ngOnInit() {
-    console.log("input: ", this.passwordRule, RegExpValidator);
+    this.subscription = this.keyUp.pipe(
+      map(event => event['target']['value']),
+      debounceTime(300),
+      distinctUntilChanged(),
+    ).subscribe((value) => {
+      if (this.passwordRule.at_least_x_chars) this.criteria['at_least_x_chars'] = this._containAtLeastMinChars(value);
+      if (this.passwordRule.at_max_x_chars) this.criteria['at_max_x_chars'] = this._containMaxChars(value);
+      if (this.passwordRule.at_least_one_lower_case_char) this.criteria['at_least_one_lower_case_char'] = this._containAtLeastOneLowerCaseLetter(value);
+      if (this.passwordRule.at_least_one_upper_case_char) this.criteria['at_least_one_upper_case_char'] = this._containAtLeastOneUpperCaseLetter(value);
+      if (this.passwordRule.at_least_one_digit_char) this.criteria['at_least_one_digit_char'] = this._containAtLeastOneDigit(value);
+      if (this.passwordRule.at_least_one_special_char) this.criteria['at_least_one_special_char'] = this._containAtLeastOneSpecialChar(value);
+
+      this.passwordValidityChange.emit(this.criteria)
+    });
   }
 
   private _containAtLeastMinChars(password: string): boolean {
@@ -32,7 +50,7 @@ export class PasswordValidateDirective extends PasswordStrengthValidator impleme
   }
 
   private _containMaxChars(password: string): boolean {
-    return password.length <= this.passwordRule.at_max_x_chars;
+    return (password.length <= this.passwordRule.at_max_x_chars) && (password.length > 0);
   }
 
   private _containAtLeastOneLowerCaseLetter(password: string): boolean {
@@ -53,13 +71,12 @@ export class PasswordValidateDirective extends PasswordStrengthValidator impleme
 
   @HostListener('keyup', ['$event']) onkeyup(event: KeyboardEvent) {
     this.criteria['password'] = event['target']['value'];
-    this.criteria['at_least_x_chars'] = this._containAtLeastMinChars(event['target']['value']);
-    this.criteria['at_max_x_chars'] = this._containMaxChars(event['target']['value']);
-    this.criteria['at_least_one_lower_case_char'] = this._containAtLeastOneLowerCaseLetter(event['target']['value']);
-    this.criteria['at_least_one_upper_case_char'] = this._containAtLeastOneUpperCaseLetter(event['target']['value']);
-    this.criteria['at_least_one_digit_char'] = this._containAtLeastOneDigit(event['target']['value']);
-    this.criteria['at_least_one_special_char'] = this._containAtLeastOneSpecialChar(event['target']['value']);
-    this.passwordValidityChange.emit(this.criteria)
+    this.keyUp.next(event);
   }
+
+  // ngOnDestroy(): void {
+  //   alert()
+  //   this.subscription.unsubscribe();
+  // }
 
 }

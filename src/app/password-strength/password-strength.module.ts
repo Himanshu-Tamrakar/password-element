@@ -4,13 +4,28 @@ import { PasswordStrengthComponent } from './component/password-strength/passwor
 import { PasswordStrengthInfoComponent } from './component/password-strength-info/password-strength-info.component';
 import { PasswordValidateDirective } from './directive/password-validate.directive';
 
+import {
+  MatFormFieldModule,
+  MatInputModule,
+  MatCardModule,
+  MatIconModule,
+  MatButtonModule
+} from "@angular/material";
+
+const modules = [
+  CommonModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatCardModule,
+  MatIconModule,
+  MatButtonModule
+];
+
 export { PasswordStrengthValidator } from './validator/password-strength-validator'
 
 @NgModule({
   declarations: [PasswordStrengthComponent, PasswordStrengthInfoComponent, PasswordValidateDirective],
-  imports: [
-    CommonModule
-  ],
+  imports: [modules],
   exports:[PasswordStrengthComponent, PasswordStrengthInfoComponent]
 })
 export class PasswordStrengthModule {}

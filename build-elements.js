@@ -2,14 +2,19 @@ const fs = require('fs-extra');
 const concat = require('concat');
 
 var f = []
+var css = ""
 fs.readdir("./dist/password-element", function(err, items) {
   for (let index = 0; index < items.length; index++) {
     if(items[index].includes(".js")) {f.push("./dist/password-element/" + items[index]);}
+    else if (items[index].includes(".css")) {
+      css = "./dist/password-element/" + items[index];
+    }
   }
   build(f);
 });
 
  function build(files) {
+   console.log(files)
   // const files = [
   //   './dist/password-element/scripts.9ddf727ecc94cd123172.js',
   //   './dist/password-element/runtime-es2015.f80f43fdfe5b65e71027.js',
@@ -24,7 +29,7 @@ fs.readdir("./dist/password-element", function(err, items) {
   
   fs.ensureDir('elements')
   concat(files, 'elements/elements.js');
-  fs.copyFile('./dist/password-element/styles.09e2c710755c8867a460.css', 'elements/styles.css')
+  fs.copyFile(css, 'elements/styles.css')
   //await fs.copy('./dist/elements/assets/', 'elements/assets/' )
 
 }

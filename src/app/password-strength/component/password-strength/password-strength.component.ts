@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { _PRule, _Requirements } from '../../interface/password-rule';
 import { PasswordStrengthInfoComponent } from '../password-strength-info/password-strength-info.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-password-strength',
@@ -9,9 +10,10 @@ import { PasswordStrengthInfoComponent } from '../password-strength-info/passwor
 })
 export class PasswordStrengthComponent implements OnInit {
   @Input('passwordRule') passwordRule: _PRule;
-  @Output() validatedPassword = new EventEmitter<string>();
+  @Output() validatedPassword = new EventEmitter<object>();
 
   @ViewChild(PasswordStrengthInfoComponent, { static: false }) passwordStrengthInfoComponent: any;
+  error = false;
 
   requirments: _Requirements = {
     at_least_x_chars: false,
@@ -21,43 +23,70 @@ export class PasswordStrengthComponent implements OnInit {
     at_least_one_digit_char: false,
     at_least_one_special_char: false,
     password: ''
-  };;
+  };
+
+  hide = true;
+
   constructor() { }
 
   ngOnInit() {
-    console.log("Rule", this.passwordRule);
+    this.checkValidityAndUpdate(this.passwordRule);
+  }
+
+  private checkValidityAndUpdate(passwordRule: _PRule): void {
+    if (!this.passwordRule.hasOwnProperty('at_least_x_chars') || !this.passwordRule.hasOwnProperty('at_max_x_chars')
+      || !this.passwordRule.hasOwnProperty('at_least_one_lower_case_char') || !this.passwordRule.hasOwnProperty('at_least_one_upper_case_char')
+      || !this.passwordRule.hasOwnProperty('at_least_one_digit_char') || !this.passwordRule.hasOwnProperty('at_least_one_special_char')
+    ) {
+      alert("It seems like you haven't send correct rule! All fields are mandatory.");
+      this.error = true;
+      return;
+    }
+
+    if (((typeof this.passwordRule.at_least_x_chars) != 'number') || ((typeof this.passwordRule.at_max_x_chars) != 'number')
+      || ((typeof this.passwordRule.at_least_one_lower_case_char) != 'boolean') || ((typeof this.passwordRule.at_least_one_upper_case_char) != 'boolean')
+      || ((typeof this.passwordRule.at_least_one_digit_char) != 'boolean') || ((typeof this.passwordRule.at_least_one_special_char) != 'boolean')
+    ) {
+      alert("It seems like you haven't send correct rule! All fields are mandatory.");
+      this.error = true;
+      return;
+    }
+
+    if (this.passwordRule.at_least_x_chars < 8) this.passwordRule.at_least_x_chars = 8;
+    if (this.passwordRule.at_max_x_chars > 30) this.passwordRule.at_max_x_chars = 30;
+
   }
 
   public passwordValidityChange(requirments: _Requirements) {
-
     this.requirments = requirments;
 
+    debugger
     // To Run Change Detection on Child Component
     this.passwordStrengthInfoComponent.runChangeDetection()
 
-    if (requirments.at_least_x_chars && requirments.at_max_x_chars && requirments.at_least_one_lower_case_char && requirments.at_least_one_upper_case_char && requirments.at_least_one_digit_char && requirments.at_least_one_special_char)
-      this.validatedPassword.emit(requirments.password);
-
-    // if (this.isRequirementsChagedWithOlder(requirments)) {
-    //   debugger
-    //   this.requirments = JSON.parse(JSON.stringify(requirments));
-    //   // this.requirments = { ...requirments }
-    //
-    //   // To Run Change Detection on Child Component
-    //   this.passwordStrengthInfoComponent.runChangeDetection()
-    //
-    //   if (requirments.at_least_x_chars && requirments.at_max_x_chars && requirments.at_least_one_lower_case_char && requirments.at_least_one_upper_case_char && requirments.at_least_one_digit_char && requirments.at_least_one_special_char)
-    //     this.validatedPassword.emit(requirments.password);
-    // }
+    this.emitValue(requirments);
   }
 
-  // isRequirementsChagedWithOlder(newReq: _Requirements): boolean {
-  //   debugger
-  //   if (this.requirments.at_least_x_chars != newReq.at_least_x_chars || this.requirments.at_max_x_chars != newReq.at_max_x_chars ||
-  //     this.requirments.at_least_one_lower_case_char != newReq.at_least_one_lower_case_char || this.requirments.at_least_one_upper_case_char != newReq.at_least_one_upper_case_char ||
-  //     this.requirments.at_least_one_digit_char != newReq.at_least_one_digit_char || this.requirments.at_least_one_special_char != newReq.at_least_one_special_char) return true;
-  //
-  //   return false;
-  // }
+  private emitValue(requirments: _Requirements): void {
+    debugger
+    if (!requirments['at_least_x_chars'] || !requirments['at_max_x_chars']) {
+      this.validatedPassword.emit({ passworCheck: false, password: requirments.password });
+      return;
+    }
+
+    const keys: String[] = _.keys(_.omit(this.passwordRule, ['at_least_x_chars', 'at_max_x_chars']));
+
+
+    for(let i=0; i < keys.length; i++) {
+      const k: string = String(keys[i]);
+
+      if(this.passwordRule[k] && !requirments[k]) {
+          this.validatedPassword.emit({passworCheck: false, password: requirments.password});
+          return;
+      }
+    }
+
+    this.validatedPassword.emit({ passworCheck: true, password: requirments.password });
+  }
 
 }

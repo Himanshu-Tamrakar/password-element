@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { PasswordStrengthModule } from './password-strength/password-strength.module';
 import { PasswordStrengthComponent } from './password-strength/component/password-strength/password-strength.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material/material.module';
 
 @NgModule({
   declarations: [
@@ -16,18 +17,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     AppRoutingModule,
     PasswordStrengthModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule, 
+    MaterialModule
   ],
   entryComponents: [PasswordStrengthComponent],
-  providers: [],
-  bootstrap: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule implements DoBootstrap { 
 
   ngDoBootstrap(): void {
       const el = createCustomElement(PasswordStrengthComponent, {injector: this.injector});
-      customElements.define("app-password-strength", el);
+      customElements.define("app-password", el);
   }
 
   constructor(private injector: Injector) {

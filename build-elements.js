@@ -29,7 +29,7 @@ fs.readdir("./dist/password-element", function(err, items) {
   
   fs.ensureDir('elements')
   concat(files, 'elements/elements.js');
-  fs.copyFile(css, 'elements/styles.css')
+  if(css != "") fs.copyFile(css, 'elements/styles.css')
   //await fs.copy('./dist/elements/assets/', 'elements/assets/' )
 
 }

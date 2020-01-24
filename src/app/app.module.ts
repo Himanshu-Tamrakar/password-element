@@ -26,11 +26,15 @@ import { MaterialModule } from './material/material.module';
 export class AppModule implements DoBootstrap { 
 
   ngDoBootstrap(): void {
-      const el = createCustomElement(PasswordStrengthComponent, {injector: this.injector});
-      customElements.define("app-password", el);
+      // const el = createCustomElement(PasswordStrengthComponent, {injector: this.injector});
+      // if(!customElements.get('app-password')) {console.log("sudha priya is wrong");customElements.define("app-password", el);}
+      // else console.log("Sudha priya is right");
   }
 
   constructor(private injector: Injector) {
+    const el = createCustomElement(PasswordStrengthComponent, {injector: this.injector});
+      if(!customElements.get('app-password')) {console.log("sudha priya is wrong");customElements.define("app-password", el);}
+      else console.log("Sudha priya is right");
       // const el = createCustomElement(PasswordStrengthComponent, {injector: this.injector});
       // customElements.define("app-password-strength", el);
   }

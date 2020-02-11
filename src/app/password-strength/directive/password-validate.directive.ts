@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, Output, OnInit, EventEmitter, HostListener } from '@angular/core';
+import { Directive, ElementRef, Input, Output, OnInit, EventEmitter, HostListener, ChangeDetectorRef } from '@angular/core';
 import { _PRule, _Requirements } from '../interface/password-rule';
 import { RegExpValidator } from '../validator/regexp.class';
 import { PasswordStrengthValidator } from '../validator/password-strength-validator';
@@ -26,7 +26,7 @@ export class PasswordValidateDirective extends PasswordStrengthValidator impleme
     password: ''
   };
 
-  constructor(private el: ElementRef) { super() }
+  constructor(private el: ElementRef, private changeDetector: ChangeDetectorRef) { super() }
 
   ngOnInit() {
     this.subscription = this.keyUp.pipe(
@@ -42,6 +42,8 @@ export class PasswordValidateDirective extends PasswordStrengthValidator impleme
       if (this.passwordRule.at_least_one_special_char) this.criteria['at_least_one_special_char'] = this._containAtLeastOneSpecialChar(value);
 
       this.passwordValidityChange.emit(this.criteria)
+      this.changeDetector.detectChanges();
+
     });
   }
 

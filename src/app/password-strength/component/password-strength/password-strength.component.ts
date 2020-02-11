@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { _PRule, _Requirements } from '../../interface/password-rule';
 import { PasswordStrengthInfoComponent } from '../password-strength-info/password-strength-info.component';
 import * as _ from 'lodash';
@@ -12,7 +12,7 @@ export class PasswordStrengthComponent implements OnInit {
   @Input('passwordRule') passwordRule: _PRule;
   @Output() validatedPassword = new EventEmitter<object>();
 
-  @ViewChild(PasswordStrengthInfoComponent, { static: false }) passwordStrengthInfoComponent: any;
+  @ViewChild(PasswordStrengthInfoComponent, { static: true }) passwordStrengthInfoComponent: PasswordStrengthInfoComponent;
   error = false;
 
   requirments: _Requirements = {
@@ -27,7 +27,11 @@ export class PasswordStrengthComponent implements OnInit {
 
   hide = true;
 
-  constructor() { }
+  constructor(private changeDetector: ChangeDetectorRef) { }
+
+  checkChildRef() {
+    console.log(this.passwordStrengthInfoComponent)
+  }
 
   ngOnInit() {
     this.checkValidityAndUpdate(this.passwordRule);
@@ -71,6 +75,7 @@ export class PasswordStrengthComponent implements OnInit {
     debugger
     if (!requirments['at_least_x_chars'] || !requirments['at_max_x_chars']) {
       this.validatedPassword.emit({ passworCheck: false, password: requirments.password });
+      this.changeDetector.detectChanges();
       return;
     }
 
@@ -82,11 +87,14 @@ export class PasswordStrengthComponent implements OnInit {
 
       if(this.passwordRule[k] && !requirments[k]) {
           this.validatedPassword.emit({passworCheck: false, password: requirments.password});
+          this.changeDetector.detectChanges();
           return;
       }
     }
 
     this.validatedPassword.emit({ passworCheck: true, password: requirments.password });
+
+    this.changeDetector.detectChanges();
   }
 
 }

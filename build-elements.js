@@ -20,19 +20,19 @@ fs.readdir("./dist/password-element", function(err, items) {
   //await fs.copy('./dist/elements/assets/', 'elements/assets/' )
 
 
-  const srcpath = '/home/himanshu/Learning/password-element/elements/elements.js'
-  const dstpath = '/home/himanshu/Learning/password-element-use/src/assets/password/elements.js'
-  //With a callback:
-  fs.move(srcpath, dstpath, err => {
-  if (err) return console.error(err)
-    console.log('success!')
-  })
+  // const srcpath = '/home/himanshu/Learning/password-element/elements/elements.js'
+  // const dstpath = '/home/himanshu/Learning/password-element-use/src/assets/password/elements.js'
+  // //With a callback:
+  // fs.move(srcpath, dstpath, err => {
+  // if (err) return console.error(err)
+  //   console.log('success!')
+  // })
 
-  const srcpath1 = '/home/himanshu/Learning/password-element/elements/styles.css'
-  const dstpath1 = '/home/himanshu/Learning/password-element-use/src/assets/password/styles.css'
-  //With a callback:
-  fs.move(srcpath1, dstpath1, err => {
-    if (err) return console.error(err)
-    console.log('element move to destination folder!')
-  })
+  // const srcpath1 = '/home/himanshu/Learning/password-element/elements/styles.css'
+  // const dstpath1 = '/home/himanshu/Learning/password-element-use/src/assets/password/styles.css'
+  // //With a callback:
+  // fs.move(srcpath1, dstpath1, err => {
+  //   if (err) return console.error(err)
+  //   console.log('element move to destination folder!')
+  // })
 }

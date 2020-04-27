@@ -9,10 +9,12 @@ import { createCustomElement } from '@angular/elements';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, BrowserAnimationsModule],
+  imports: [BrowserModule, BrowserAnimationsModule, NgxChartsModule],
   bootstrap: [],
   entryComponents: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -22,10 +24,10 @@ export class AppModule implements DoBootstrap {
 
   constructor(private injector: Injector) {
     const el: any = createCustomElement(AppComponent, { injector: this.injector });
-    if (!customElements.get('app-cmp')) {
-      customElements.define('app-cmp', el);
+    if (!customElements.get('bar-chart')) {
+      customElements.define('bar-chart', el);
     } else {
-      console.log('Sudha priya is right');
+      console.log('Element Already Loaded');
     }
   }
 }

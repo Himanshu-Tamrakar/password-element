@@ -1,1 +1,27 @@
-<a href="http://google.com" target="_blank" rel="noopener noreferrer">Web component worked</a>
+
+
+<div class="card">
+    <div class="header">
+      <h1 class="title">Lazy</h1>
+    </div>
+    <div class="content">
+
+      <div style="height:200px">
+        <ngx-charts-bar-vertical
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="data"
+        [gradient]="gradient"
+        [xAxis]="showXAxis"
+        [yAxis]="showYAxis"
+        [legend]="showLegend"
+        [showXAxisLabel]="showXAxisLabel"
+        [showYAxisLabel]="showYAxisLabel"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        (select)="onSelect($event)">
+      </ngx-charts-bar-vertical>
+      </div>
+    </div>
+  </div>
+  <!-- <h1 class="text">Light Steel Blue</h1> -->
